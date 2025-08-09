@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: TaskTracker
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:task_tracker_project}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+    driver-class-name: org.postgresql.Driver  # Optional: Explicit driver class
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true # Optional: Logs SQL statements to the console
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true  # Optional: Makes SQL logs more readable
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
+server:
+  port: ${APP_PORT:8080}
