@@ -62,4 +62,19 @@ public class TaskListController {
         return ResponseEntity.status(HttpStatus.CREATED).body(taskListMapper.toDto(createdTaskList));
     }
 
+    @GetMapping(path = "/{task_list_id}")
+    @Operation(summary = "Get a task list by ID", description = "Retrieves a specific task list by its unique identifier")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Task list found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TaskListDto.class))),
+            @ApiResponse(responseCode = "404", description = "Task list not found")
+    })
+    public ResponseEntity<TaskListDto> getTaskList(
+            @Parameter(description = "ID of the task list to retrieve")
+            @PathVariable("task_list_id") UUID taskListId) {
+        return taskListService.getTaskList(taskListId)
+                .map(taskList -> ResponseEntity.ok(taskListMapper.toDto(taskList)))
+                .orElse(ResponseEntity.notFound().build());
+    }
 }
