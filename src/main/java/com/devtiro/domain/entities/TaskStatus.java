@@ -1,4 +1,4 @@
-package com.devtiro.domain;
+package com.devtiro.domain.entities;
 
 public enum TaskStatus {
     OPEN, CLOSED;
