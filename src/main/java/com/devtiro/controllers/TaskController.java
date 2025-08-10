@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -109,6 +110,19 @@ public class TaskController {
                 taskService.updateTask(taskListId, taskId, taskMapper.fromDto(taskDto))
         );
         return ResponseEntity.ok(updatedTask);
+    }
+
+    @DeleteMapping("/{task_id}")
+    @Operation(summary = "Delete a specific task", description = "Deletes a specific task from the task list")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Task deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Task not found")
+    })
+    public ResponseEntity<Void> deleteTask(
+            @PathVariable("task_list_id") UUID taskListId,
+            @PathVariable("task_id") UUID taskId) {
+        taskService.deleteTask(taskListId, taskId);
+        return ResponseEntity.noContent().build();
     }
 
 }
