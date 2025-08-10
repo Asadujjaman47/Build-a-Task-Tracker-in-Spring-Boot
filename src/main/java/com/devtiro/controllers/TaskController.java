@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -65,4 +66,29 @@ public class TaskController {
         );
         return ResponseEntity.status(201).body(createdTask);
     }
+
+    @GetMapping("/{task_id}")
+    @Operation(summary = "Get a specific task", description = "Retrieves details of a specific task in the task list")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Task found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TaskDto.class))),
+            @ApiResponse(responseCode = "404", description = "Task not found")
+    })
+//    public Optional<TaskDto> getTask(
+//            @PathVariable("task_list_id") UUID taskListId,
+//            @PathVariable("task_id") UUID taskId) {
+//        return taskService.getTask(taskListId, taskId)
+//                .map(taskMapper::toDto);
+//    }
+    public ResponseEntity<TaskDto> getTask(
+            @PathVariable("task_list_id") UUID taskListId,
+            @PathVariable("task_id") UUID taskId) {
+
+        return taskService.getTask(taskListId, taskId)
+                .map(taskMapper::toDto)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
 }
