@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -73,8 +72,34 @@ public class TaskListController {
     public ResponseEntity<TaskListDto> getTaskList(
             @Parameter(description = "ID of the task list to retrieve")
             @PathVariable("task_list_id") UUID taskListId) {
+//        return taskListService.getTaskList(taskListId)
+//                .map(taskList -> ResponseEntity.ok(taskListMapper.toDto(taskList)))
+//                .orElse(ResponseEntity.notFound().build());
+
         return taskListService.getTaskList(taskListId)
-                .map(taskList -> ResponseEntity.ok(taskListMapper.toDto(taskList)))
-                .orElse(ResponseEntity.notFound().build());
+                .map(taskListMapper::toDto)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    @PutMapping(path = "/{task_list_id}")
+    @Operation(summary = "Update a task list", description = "Updates an existing task list with the provided details")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Task list updated successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TaskListDto.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "404", description = "Task list not found")
+    })
+    public ResponseEntity<TaskListDto> updateTaskList(
+            @Parameter(description = "ID of the task list to update")
+            @PathVariable("task_list_id") UUID taskListId,
+            @RequestBody TaskListDto taskListDto) {
+        TaskList updateTaskList = taskListService.updateTaskList(
+                taskListId,
+                taskListMapper.fromDto(taskListDto)
+        );
+        return ResponseEntity.ok(taskListMapper.toDto(updateTaskList));
+    }
+
 }
