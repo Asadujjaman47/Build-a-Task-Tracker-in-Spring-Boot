@@ -1,4 +1,4 @@
-package com.devtiro.controllers;
+package com.devtiro.exception;
 
 import com.devtiro.domain.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
