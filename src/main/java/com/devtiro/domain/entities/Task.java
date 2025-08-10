@@ -26,7 +26,7 @@ public class Task {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "priority")
+    @Column(name = "description")
     private String description;
 
     @Column(name = "due_date")
