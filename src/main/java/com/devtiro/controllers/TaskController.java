@@ -12,6 +12,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,5 +47,22 @@ public class TaskController {
                 .toList();
 
         return ResponseEntity.ok(tasks);
+    }
+
+    @PostMapping
+    @Operation(summary = "Create a new task", description = "Creates a new task in the specified task list")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Task created successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TaskDto.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input data")
+    })
+    public ResponseEntity<TaskDto> createTask(
+            @PathVariable("task_list_id") UUID taskListId,
+            @RequestBody TaskDto taskDto) {
+        TaskDto createdTask = taskMapper.toDto(
+                taskService.createTask(taskListId, taskMapper.fromDto(taskDto))
+        );
+        return ResponseEntity.status(201).body(createdTask);
     }
 }
