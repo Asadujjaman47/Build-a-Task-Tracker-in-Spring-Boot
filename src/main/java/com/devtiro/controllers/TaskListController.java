@@ -43,6 +43,7 @@ public class TaskListController {
                 .stream()
                 .map(taskListMapper::toDto)
                 .toList();
+
         return ResponseEntity.ok(taskLists);
     }
 
@@ -58,6 +59,7 @@ public class TaskListController {
         TaskList createdTaskList = taskListService.createTaskLists(
                 taskListMapper.fromDto(taskListDto)
         );
+
         return ResponseEntity.status(HttpStatus.CREATED).body(taskListMapper.toDto(createdTaskList));
     }
 
@@ -99,7 +101,22 @@ public class TaskListController {
                 taskListId,
                 taskListMapper.fromDto(taskListDto)
         );
+
         return ResponseEntity.ok(taskListMapper.toDto(updateTaskList));
+    }
+
+    @DeleteMapping(path = "/{task_list_id}")
+    @Operation(summary = "Delete a task list", description = "Deletes a specific task list")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Task list deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Task list not found")
+    })
+    public ResponseEntity<Void> deleteTaskList(
+            @Parameter(description = "ID of the task list to delete")
+            @PathVariable("task_list_id") UUID taskListId) {
+        taskListService.deleteTaskList(taskListId);
+//        return ResponseEntity.noContent().build();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }
